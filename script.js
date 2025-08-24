@@ -34,6 +34,19 @@ canvas.addEventListener("mousemove", function(event) {
   mouse.y = event.clientY;
 });
 
+canvas.addEventListener("touchstart", function(event) {
+  const touch = event.touches[0];
+  mouse.x = touch.clientX;
+  mouse.y = touch.clientY;
+})
+
+canvas.addEventListener("touchmove", function(event) {
+  event.preventDefault();
+  const touch = event.touches[0];
+  mouse.x = touch.clientX;
+  mouse.y = touch.clientY;
+}, { passive: false });
+
 function draw() {
   ctx.fillStyle = `rgba(0, 0, 0, ${settings.fadeOpacity || 0.1})`;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
