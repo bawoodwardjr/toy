@@ -9,25 +9,30 @@ let mouse = { x: canvas.width / 2, y: canvas.height / 2 };
 let trail = [];
 
 let circle = { x: canvas.width / 2, y: canvas.height / 2 };
-let square = { x: canvas.width / 2 + 60, y: canvas.height / 2 + 60 };
-let triangle = { x: canvas.width / 2 - 60, y: canvas.height / 2 - 60 };
+
+let hue = 0;
 
 let settings = {
   trailLength: 20,
   fadeOpacity: 0.1,
   circleSize: 20,
   circleSpeed: 0.05,
+  rainbow: false,
 };
 
 const trailInput = document.getElementById("trailLength");
 const opacityInput = document.getElementById("fadeOpacity");
 const sizeInput = document.getElementById("circleSize");
 const speedInput = document.getElementById("circleSpeed");
+const rainbowBtn = document.getElementById("rainbowBtn");
 
 trailInput.addEventListener("input", () => settings.trailLength = parseInt(trailInput.value));
 opacityInput.addEventListener("input", () => settings.fadeOpacity = parseFloat(opacityInput.value));
 sizeInput.addEventListener("input", () => settings.circleSize = parseInt(sizeInput.value));
 speedInput.addEventListener("input", () => settings.circleSpeed = parseFloat(speedInput.value));
+rainbowBtn.addEventListener("click", () => {
+  settings.rainbow = !settings.rainbow;
+  rainbowBtn.style.backgroundColor = settings.rainbow ? "#444" : ""})
 
 canvas.addEventListener("mousemove", function(event) {
   mouse.x = event.clientX;
@@ -63,14 +68,27 @@ function draw() {
     let t = trail[i];
     ctx.beginPath();
     ctx.arc(t.x, t.y, settings.circleSize * (i / trail.length), 0, Math.PI * 2);
-    ctx.strokeStyle = `rgba(255, 255, 255, ${i /  trail.length})`;
+    if (settings.rainbow) {
+      ctx.strokeStyle = `hsl(${(hue + i * 10) % 360}, 100%, 50%, ${i / trail.length})`;
+    } else {
+      ctx.strokeStyle = `rgba(255, 255, 255, ${i /  trail.length})`;
+    }
+
     ctx.stroke();
   }
 
   ctx.beginPath();
   ctx.arc(circle.x, circle.y, settings.circleSize, 0, Math.PI * 2);
-  ctx.strokeStyle = "white";
+  if (settings.rainbow) {
+    ctx.strokeStyle = `hsl(${hue}, 100% 50%)`;
+  } else {
+    ctx.strokeStyle = "white";
+  }
   ctx.stroke();
+
+  if (settings.rainbow) {
+    hue = (hue + 2) % 360;
+  }
 
   requestAnimationFrame(draw);
 }
